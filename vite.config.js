@@ -29,6 +29,7 @@ try {
 }
 
 export default defineConfig({
+  base: './',
   plugins: [react()],
   define: {
     __APP_COMMIT__: JSON.stringify(appCommit),
