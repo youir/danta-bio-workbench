@@ -20,7 +20,7 @@ import { makeKickoffPrompt } from './shared/utils/promptBuilder.js';
 import { folderNameFromFiles, pickFolderName } from './shared/utils/folderPicker.js';
 import { getAgents, getHealth } from './shared/utils/api.js';
 
-import quickstartImage from '../docs/quickstart.png';
+import quickstartImage from '../docs/quickstart.jpg';
 import frameworkImage from '../docs/workbench-map.jpg';
 
 const INITIAL_DRAFTS = Object.fromEntries(PROMPT_STARTERS.map(workflow => [workflow.id, workflow.seed]));
