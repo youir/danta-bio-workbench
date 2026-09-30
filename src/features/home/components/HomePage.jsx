@@ -2,27 +2,30 @@ import { memo, useRef } from 'react';
 import { ArrowRight, ClockCounterClockwise } from '@phosphor-icons/react';
 import { PROMPT_STARTERS, getStartActionLabel } from '../../../shared/constants/workflows.js';
 
-export const HomePage = memo(({ thought, setThought, taskFocus, onBegin, onOpenWorkflow, onOpenRecords }) => {
+export const HomePage = memo(({ thought, setThought, taskFocus, onBegin, onChat, onOpenWorkflow, onOpenRecords }) => {
   const textareaRef = useRef(null);
 
   return (
     <section className="home-view" aria-labelledby="home-title">
       <div className="home-eyebrow">生物博士的研究工作台</div>
       <h1 id="home-title">今天，最想弄清楚什么？</h1>
-      <p className="home-lede">写下一个观察、困惑或正在犹豫的决定。主助理会先理解问题，再陪你推进。</p>
+      <p className="home-lede">写下一个观察、困惑或正在犹豫的决定。可以直接与研究助理对话，也可以先生成启动语带走。</p>
 
-      <form className="thought-form" onSubmit={event => { event.preventDefault(); onBegin(thought, taskFocus); }}>
+      <form className="thought-form" onSubmit={event => { event.preventDefault(); onChat(thought, 'general'); }}>
         <label className="visually-hidden" htmlFor="research-thought">写下研究观察、困惑或决定</label>
         <textarea
           id="research-thought"
           ref={textareaRef}
           value={thought}
           onChange={event => setThought(event.target.value)}
-          onKeyDown={event => { if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') onBegin(thought, taskFocus); }}
+          onKeyDown={event => { if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') onChat(thought, 'general'); }}
           placeholder="例如：这个病理现象背后可能有哪些机制？我手头的证据还缺什么？"
           rows={4}
         />
-        <button className="primary-button" type="submit">{getStartActionLabel(taskFocus)} <ArrowRight size={18} weight="bold" aria-hidden="true" /></button>
+        <div className="thought-actions">
+          <button className="primary-button" type="submit">与 AI 讨论 <ArrowRight size={18} weight="bold" aria-hidden="true" /></button>
+          <button className="secondary-button" type="button" onClick={() => onBegin(thought, taskFocus)}>{getStartActionLabel(taskFocus)}</button>
+        </div>
       </form>
 
       <div className="quick-start-heading">

@@ -1,6 +1,6 @@
 {
   "name": "danta-bio-workbench",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,9 +8,10 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1 --strictPort",
-    "start": "vite --host 127.0.0.1 --strictPort --open",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
+    "start": "node server/index.mjs",
+    "serve": "node server/index.mjs",
     "check": "npm run build"
   },
   "dependencies": {

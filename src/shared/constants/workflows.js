@@ -1,6 +1,7 @@
 export const PROMPT_STARTERS = [
   {
     id: 'topic',
+    agentId: 'topic',
     label: '选题思路',
     detail: '从研究现象、证据和现实条件开始',
     focus: '选题思路',
@@ -9,6 +10,7 @@ export const PROMPT_STARTERS = [
   },
   {
     id: 'writing',
+    agentId: 'writing',
     label: '论文写作',
     detail: '起草、修改、润色或回复审稿',
     focus: '论文写作',
@@ -17,6 +19,7 @@ export const PROMPT_STARTERS = [
   },
   {
     id: 'ppt',
+    agentId: 'ppt',
     label: '科研 PPT',
     detail: '组会、开题或阶段汇报',
     focus: '科研 PPT',
@@ -25,6 +28,7 @@ export const PROMPT_STARTERS = [
   },
   {
     id: 'meeting',
+    agentId: 'meeting',
     label: '组会准备 / 复盘',
     detail: '整理讨论、决定和下一步',
     focus: '组会工作',
@@ -33,6 +37,7 @@ export const PROMPT_STARTERS = [
   },
   {
     id: 'briefing',
+    agentId: 'briefing',
     label: '生物科研日报',
     detail: '汇总有来源的研究动态',
     focus: '生物科研日报',

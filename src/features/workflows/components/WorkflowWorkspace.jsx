@@ -1,9 +1,9 @@
 import { memo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, FilePlus, ShareNetwork, X } from '@phosphor-icons/react';
+import { ArrowLeft, ArrowRight, ChatsCircle, FilePlus, ShareNetwork, X } from '@phosphor-icons/react';
 
 const MEETING_REVIEW_SEED = '我想复盘一次组会：……请根据实际讨论记录整理导师/同门反馈、已决定事项、尚未决定的问题和行动项，不要补写没有发生的内容。';
 
-export const WorkflowWorkspace = memo(({ workflow, thought, setThought, files = [], onBack, onBegin, onFilesAdded, onRemoveFile, onOpenMechanism }) => {
+export const WorkflowWorkspace = memo(({ workflow, thought, setThought, files = [], onBack, onBegin, onChat, chatConfigured, onFilesAdded, onRemoveFile, onOpenMechanism }) => {
   const fileInputRef = useRef(null);
   const [meetingMode, setMeetingMode] = useState('prepare');
 
@@ -47,15 +47,21 @@ export const WorkflowWorkspace = memo(({ workflow, thought, setThought, files = 
           <label className="visually-hidden" htmlFor={`${workflow.id}-thought`}>描述本次{workflow.label}任务</label>
           <textarea id={`${workflow.id}-thought`} className="discussion-textarea" value={thought} onChange={event => setThought(event.target.value)} rows={7} />
           <div className="workspace-form-footer">
-            <span>生成后由你检查启动语，再复制到 Codex；本页不会启动对话。</span>
-            <button className="primary-button compact" type="button" onClick={() => onBegin(thought, workflow.focus)}>整理启动语 <ArrowRight size={16} aria-hidden="true" /></button>
+            <span>可以直接让研究助理接手，也可以先生成启动语再复制到 Codex。</span>
+            <div className="footer-actions">
+              <button className="primary-button compact" type="button" onClick={() => onChat(thought, workflow.agentId)}><ChatsCircle size={16} aria-hidden="true" />直接对话 <ArrowRight size={16} aria-hidden="true" /></button>
+              <button className="secondary-button compact" type="button" onClick={() => onBegin(thought, workflow.focus)}>整理启动语</button>
+            </div>
           </div>
         </section>
 
         <div className="workspace-sidepanels">
           <section className="workspace-panel" aria-labelledby="conversation-title">
-            <div className="workspace-panel-heading"><div><span className="panel-kicker">对话接续</span><h2 id="conversation-title">Codex 对话</h2></div><span className="connection-pill">尚未同步</span></div>
-            <div className="workspace-empty"><p>从启动语进入 Codex 开始讨论。</p><span>本机原型暂不能读取或管理历史对话；可在 Codex 对话中继续。</span></div>
+            <div className="workspace-panel-heading"><div><span className="panel-kicker">对话接续</span><h2 id="conversation-title">AI 对话</h2></div><span className={`connection-pill ${chatConfigured ? 'ok' : ''}`}>{chatConfigured ? '已连接' : '尚未配置'}</span></div>
+            <div className="workspace-empty">
+              <p>{chatConfigured ? '把本页内容交给研究助理继续讨论。' : '服务端尚未配置对话模型。'}</p>
+              <button className="secondary-button compact" type="button" onClick={() => onChat(thought, workflow.agentId)}><ChatsCircle size={16} aria-hidden="true" />带着当前内容开始对话</button>
+            </div>
           </section>
 
           <section className="workspace-panel" aria-labelledby="files-title">
