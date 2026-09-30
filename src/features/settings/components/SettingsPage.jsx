@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import {
   ArrowSquareOut,
   CheckCircle,
@@ -14,6 +14,7 @@ import {
 import { CHAT_PROVIDERS, IMAGE_PROVIDERS } from '../../../shared/constants/providers.js';
 import { PROMPT_STARTERS } from '../../../shared/constants/workflows.js';
 import { testConnection } from '../../../shared/utils/api.js';
+import { VaultBuilder } from '../../vault/components/VaultBuilder.jsx';
 
 const TABS = [
   { id: 'models', label: '模型与 API', hint: '对话与生图凭据' },
@@ -168,18 +169,22 @@ export const SettingsPage = memo(
     onToggleKnowledgeList,
     onClearSecrets,
     onResetAll,
+    folderInputRef,
     onPickFolder,
+    onFolderInputChange,
+    onManualFolder,
+    onFolderName,
     onNotice,
   }) => {
     const [tab, setTab] = useState('models');
     const [testing, setTesting] = useState({ chat: false, image: false });
     const [results, setResults] = useState({ chat: null, image: null });
-    const fileRef = useRef(null);
+    const [manualFolder, setManualFolder] = useState('');
 
     useEffect(() => {
-      fileRef.current?.setAttribute('webkitdirectory', '');
-      fileRef.current?.setAttribute('directory', '');
-    }, []);
+      folderInputRef?.current?.setAttribute('webkitdirectory', '');
+      folderInputRef?.current?.setAttribute('directory', '');
+    }, [folderInputRef]);
 
     async function runTest(channel) {
       const channelConfig = settings[channel];
@@ -271,7 +276,7 @@ export const SettingsPage = memo(
                     <div>
                       <span className="panel-kicker">本地资料</span>
                       <h2>知识库文件夹</h2>
-                      <p>选择你本机的文献或笔记文件夹。当前网页只记录文件夹名称，不扫描、不上传、不读取内容。</p>
+                      <p>选择你本机的文献或笔记文件夹。浏览器不会把真实磁盘路径交给网页，这里只记录文件夹名称，不扫描、不上传、不读取内容。</p>
                     </div>
                   </header>
 
@@ -280,12 +285,57 @@ export const SettingsPage = memo(
                     <div className="settings-folder">
                       <span className={`status-dot ${knowledge.folderName ? 'selected' : ''}`} aria-hidden="true" />
                       <strong>{knowledge.folderName || '尚未选择文件夹'}</strong>
-                      <button className="secondary-button compact" type="button" onClick={() => fileRef.current?.click()}>
+                      <button className="secondary-button compact" type="button" onClick={onPickFolder}>
                         <FolderOpen size={15} aria-hidden="true" />{knowledge.folderName ? '重新选择' : '选择文件夹'}
                       </button>
                     </div>
-                    <input ref={fileRef} type="file" hidden onChange={onPickFolder} />
+                    <input ref={folderInputRef} type="file" hidden onChange={onFolderInputChange} />
+                    <small className="settings-help">
+                      选择后会弹出一个文件夹窗口（确认按钮在 macOS 上就叫「打开」）。<strong>文件夹里没有任何文件时取不到名称</strong>，此时可以用下方的一键构建把它建成标准骨架，或手动填写名称。
+                    </small>
                   </div>
+
+                  <div className="settings-field">
+                    <label htmlFor="manual-folder">手动填写名称或路径</label>
+                    <div className="settings-keyrow">
+                      <input
+                        id="manual-folder"
+                        type="text"
+                        spellCheck={false}
+                        autoComplete="off"
+                        placeholder="例如：文献库 或 ~/Documents/我的课题"
+                        value={manualFolder}
+                        onChange={event => setManualFolder(event.target.value)}
+                        onKeyDown={event => {
+                          if (event.key === 'Enter') {
+                            event.preventDefault();
+                            onManualFolder?.(manualFolder);
+                          }
+                        }}
+                      />
+                      <button
+                        className="secondary-button compact"
+                        type="button"
+                        onClick={() => onManualFolder?.(manualFolder)}
+                      >
+                        保存
+                      </button>
+                    </div>
+                    <small className="settings-help">浏览器读不到真实路径，手动填写的内容会原样写进启动语的路径提示里。</small>
+                  </div>
+                </section>
+
+                <section className="settings-card" aria-label="一键构建知识库">
+                  <header className="settings-card-head">
+                    <div>
+                      <span className="panel-kicker">从零开始</span>
+                      <h2>文件夹是空的？直接建一套</h2>
+                      <p>
+                        没有现成资料库也能开工。下面是三条通道，任选一条把标准骨架落到本机，模板已按科研记录的习惯排好。
+                      </p>
+                    </div>
+                  </header>
+                  <VaultBuilder onNotice={onNotice} onFolderName={onFolderName} />
                 </section>
 
                 <section className="settings-card" aria-label="匹配规则">

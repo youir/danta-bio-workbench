@@ -17,6 +17,7 @@ import { useChat } from './features/chat/hooks/useChat.js';
 import { PROMPT_STARTERS } from './shared/constants/workflows.js';
 import { FALLBACK_AGENTS } from './shared/constants/agents.js';
 import { makeKickoffPrompt } from './shared/utils/promptBuilder.js';
+import { folderNameFromFiles, pickFolderName } from './shared/utils/folderPicker.js';
 import { getAgents, getHealth } from './shared/utils/api.js';
 
 import quickstartImage from '../docs/quickstart.png';
@@ -46,6 +47,7 @@ export function App() {
   const [notice, showNotice, hideNotice] = useNotice();
   const settingsStore = useSettings();
   const pickerRef = useRef(null);
+  const settingsFolderRef = useRef(null);
   const dialogRef = useRef(null);
   const copyButtonRef = useRef(null);
 
@@ -69,9 +71,12 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    pickerRef.current?.setAttribute('webkitdirectory', '');
-    pickerRef.current?.setAttribute('directory', '');
-  }, []);
+    // 两个兜底用的 file input 都需要 webkitdirectory 才能选到「文件夹」
+    [pickerRef, settingsFolderRef].forEach(ref => {
+      ref.current?.setAttribute('webkitdirectory', '');
+      ref.current?.setAttribute('directory', '');
+    });
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -141,13 +146,55 @@ export function App() {
     event.target.value = '';
   }
 
-  function handleVaultPick(event) {
-    const first = event.target.files?.[0];
-    if (!first) return;
-    const name = first.webkitRelativePath?.split('/')[0] || first.name;
+  function rememberFolder(name, extra = '') {
     settingsStore.updateKnowledge({ folderName: name });
-    showNotice(`已记下文件夹名称「${name}」；尚未连接、扫描或读取内容。`, 'info');
+    showNotice(`已记下文件夹名称「${name}」${extra}；网页不会读取其中的内容。`, 'success');
+  }
+
+  /**
+   * 打开文件夹选择。
+   * 优先走 File System Access API（空文件夹也能拿到名称），
+   * 不支持时才回退到 webkitdirectory 的 file input。
+   */
+  async function requestFolderPick(inputRef = pickerRef) {
+    const result = await pickFolderName();
+
+    if (result?.supported) {
+      if (result.cancelled) return;
+      if (result.name) {
+        rememberFolder(result.name);
+        return;
+      }
+      showNotice(`没有取到文件夹名称（${result.error || '未知原因'}），改用文件选择方式。`, 'warning');
+    }
+
+    inputRef?.current?.click();
+  }
+
+  /** webkitdirectory 兜底通道：从文件列表反推文件夹名。 */
+  function handleVaultPick(event) {
+    const files = event.target.files;
     event.target.value = '';
+
+    const { name, fileCount } = folderNameFromFiles(files);
+    if (!name) {
+      showNotice(
+        '这个文件夹是空的，选择器读不到名称。可以直接用「一键构建知识库」把它建成标准骨架，或在下方手动填写名称。',
+        'warning'
+      );
+      return;
+    }
+    rememberFolder(name, `（含 ${fileCount} 个文件）`);
+  }
+
+  /** 手动填写文件夹名称或路径（浏览器拿不到真实路径时的兜底）。 */
+  function handleManualFolder(name) {
+    const value = (name || '').trim();
+    if (!value) {
+      showNotice('名称不能为空。', 'warning');
+      return;
+    }
+    rememberFolder(value);
   }
 
   function renderContent() {
@@ -232,7 +279,11 @@ export function App() {
           onToggleKnowledgeList={settingsStore.toggleKnowledgeList}
           onClearSecrets={settingsStore.clearSecrets}
           onResetAll={settingsStore.resetAll}
-          onPickFolder={handleVaultPick}
+          folderInputRef={settingsFolderRef}
+          onPickFolder={() => requestFolderPick(settingsFolderRef)}
+          onFolderInputChange={handleVaultPick}
+          onManualFolder={handleManualFolder}
+          onFolderName={name => settingsStore.updateKnowledge({ folderName: name })}
           onNotice={showNotice}
         />
       );
@@ -248,7 +299,10 @@ export function App() {
           vaultName={vaultName}
           vaultStatus={vaultStatus}
           pickerRef={pickerRef}
+          onRequestPick={() => requestFolderPick(pickerRef)}
           onPickerChange={handleVaultPick}
+          onManualFolder={handleManualFolder}
+          onNotice={showNotice}
         />
       </section>
     );

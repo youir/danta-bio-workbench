@@ -877,6 +877,11 @@ button:focus-visible, textarea:focus-visible {
 .vault-info { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 11px; background: var(--surface-base); border-radius: 10px; font-size: 11px; }
 .vault-info strong { color: var(--ink-muted); }
 .vault-info code { color: var(--ink-secondary); }
+.vault-manual { display: grid; gap: 7px; margin-top: 14px; }
+.vault-manual > label { color: var(--ink-secondary); font-size: 11px; font-weight: 650; letter-spacing: .03em; }
+.vault-manual-row { display: flex; align-items: center; gap: 8px; }
+.vault-manual-row input { flex: 1; min-width: 0; padding: 9px 11px; border: 1px solid var(--line-default); border-radius: 10px; background: var(--surface-base); color: var(--ink-primary); font-size: 12.5px; font-family: inherit; }
+.vault-manual-row input:focus { outline: none; border-color: var(--accent-border); background: var(--surface-raised); }
 .connection-explainer { display: flex; gap: 10px; margin-top: 19px; padding: 13px; border-radius: 11px; background: var(--surface-base); color: var(--ink-muted); }
 .connection-explainer > svg { flex: 0 0 auto; margin-top: 1px; color: var(--accent-strong); }
 .connection-explainer strong { color: var(--ink-secondary); font-size: 11px; }
@@ -1126,4 +1131,46 @@ button:focus-visible, textarea:focus-visible {
   .settings-layout { grid-template-columns: 1fr; }
   .settings-tabs { position: static; grid-auto-flow: column; grid-auto-columns: 1fr; }
   .settings-tab small { display: none; }
+}
+
+/* ── 一键构建知识库 ────────────────────────────────────────── */
+.vault-builder { display: grid; gap: 14px; margin-top: 14px; padding: 16px; border: 1px dashed var(--accent-border); border-radius: 14px; background: var(--accent-soft); }
+.vault-builder.is-compact { margin-top: 0; }
+.vault-builder-head { display: grid; gap: 4px; }
+.vault-builder-head h3 { margin: 0; color: var(--ink-primary); font-size: 14px; font-weight: 650; }
+.vault-builder-head p { margin: 0; color: var(--ink-secondary); font-size: 11.5px; line-height: 1.75; }
+.vault-builder-head p strong { color: var(--accent-strong); }
+
+.vault-builder-dirs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.vault-builder-dirs li { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border: 1px solid var(--accent-border); border-radius: var(--radius-pill); background: var(--surface-raised); color: var(--ink-secondary); font-size: 10.5px; white-space: nowrap; }
+.vault-builder-dirs svg { color: var(--accent-primary); }
+
+.vault-build-note { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border: 1px solid #eadfc8; border-radius: 10px; background: #fdf8ee; color: #7a6132; font-size: 11px; line-height: 1.7; }
+.vault-build-note svg { flex: 0 0 auto; margin-top: 1px; }
+
+.vault-scanline { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border: 1px solid var(--line-default); border-radius: 10px; background: var(--surface-raised); }
+.vault-scanline > div { display: grid; gap: 3px; min-width: 0; }
+.vault-scanline strong { color: var(--ink-primary); font-size: 12.5px; }
+.vault-scanline small { color: var(--ink-muted); font-size: 10.5px; }
+
+.vault-builder-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.vault-builder-actions .primary-button, .vault-builder-actions .secondary-button { min-height: 36px; padding: 8px 14px; font-size: 12px; }
+
+.vault-builder-target { display: grid; gap: 6px; }
+.vault-builder-target label { color: var(--ink-secondary); font-size: 11px; font-weight: 650; letter-spacing: .03em; }
+.vault-builder-target input { width: 100%; padding: 9px 11px; border: 1px solid var(--line-default); border-radius: 10px; background: var(--surface-raised); color: var(--ink-primary); font-size: 12.5px; font-family: inherit; }
+.vault-builder-target input:focus { outline: none; border-color: var(--accent-border); }
+.vault-builder-target small { color: var(--ink-light); font-size: 10.5px; line-height: 1.6; }
+
+.vault-builder-result { display: grid; gap: 8px; padding: 12px; border: 1px solid #cfe4d5; border-radius: 10px; background: #f4faf5; }
+.vault-result-line { display: flex; align-items: center; gap: 7px; color: #2f6b45; font-size: 12.5px; font-weight: 600; }
+.vault-result-line svg { color: #3f8c5c; }
+.vault-result-failed { margin: 0; padding-left: 18px; color: #a2553f; font-size: 11px; line-height: 1.7; }
+.vault-builder-result small { color: var(--ink-muted); font-size: 10.5px; line-height: 1.6; }
+
+@media (prefers-color-scheme: dark) {
+  .vault-build-note { border-color: #4d3d22; background: #2a2318; color: #d8b878; }
+  .vault-builder-result { border-color: #2f4a39; background: #1c2721; }
+  .vault-result-line { color: #86c9a3; }
+  .vault-result-failed { color: #e0998a; }
 }
