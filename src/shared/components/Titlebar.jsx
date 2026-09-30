@@ -13,7 +13,7 @@ export const Titlebar = memo(({ guideUrl, frameworkUrl, chatReady, imageReady, o
       </div>
       <div className="titlebar-actions">
         <a className="titlebar-link" href={guideUrl} target="_blank" rel="noreferrer">使用说明 <ArrowSquareOut size={14} aria-hidden="true" /></a>
-        <a className="titlebar-link" href={frameworkUrl} target="_blank" rel="noreferrer">框架图 <ArrowSquareOut size={14} aria-hidden="true" /></a>
+        <a className="titlebar-link" href={frameworkUrl} target="_blank" rel="noreferrer">架构图 <ArrowSquareOut size={14} aria-hidden="true" /></a>
         <button
           className={`titlebar-settings ${missing ? 'is-alert' : ''}`}
           type="button"

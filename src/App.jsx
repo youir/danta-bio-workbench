@@ -21,7 +21,7 @@ import { folderNameFromFiles, pickFolderName } from './shared/utils/folderPicker
 import { getAgents, getHealth } from './shared/utils/api.js';
 
 import quickstartImage from '../docs/quickstart.png';
-import frameworkImage from '../docs/workbench-map.png';
+import frameworkImage from '../docs/workbench-map.jpg';
 
 const INITIAL_DRAFTS = Object.fromEntries(PROMPT_STARTERS.map(workflow => [workflow.id, workflow.seed]));
 const MECHANISM_SEED = '研究主题 / 核心发现：……\n已有证据或参考文献：……\n使用场景：PPT 汇报 / 论文插图';
